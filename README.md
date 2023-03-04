@@ -57,7 +57,7 @@ http://jyywiki.cn/ICS/2021/labs/PA1 下载 rom 试着运行
 
 将游戏 ROM 放置在`nes/rom/`目录下，然后可通过 `mainargs` 选择运行的游戏, 如:
 
-```
+```sh
 cd fceux-am
 make ARCH=native run mainargs=mario
 ```
@@ -70,3 +70,30 @@ make ARCH=native run mainargs=mario
 * K — B键
 * W/S/A/D — UP/DOWN/LEFT/RIGHT
 * Q — 退出
+
+测试按键
+
+```sh
+bash init.sh am-kernels
+cd am-kernels/tests/am-tests
+make ARCH=native mainargs=k run
+```
+
+加快编译速度
+
+```sh
+lscpu # 查看 CPU 数量
+make -j8 # 8 个就是 j8
+time make # 查看 total 编译时间
+```
+
+使用 ccache
+
+```sh
+sudo apt install ccache
+man ccache # 查看 usage
+
+export PATH="/usr/lib/ccache:$PATH" # 添加到 shell 配置里
+which gcc # 应该输出 /usr/lib/ccache/gcc
+```
+
