@@ -52,3 +52,21 @@ make gdb
 运行后会自动追踪并提交代码，`git log` 查看，如果不想可以注释掉 Makefile 里的 `define git_commit` 相关内容
 
 ## pa1
+
+http://jyywiki.cn/ICS/2021/labs/PA1 下载 rom 试着运行
+
+将游戏 ROM 放置在`nes/rom/`目录下，然后可通过 `mainargs` 选择运行的游戏, 如:
+
+```
+cd fceux-am
+make ARCH=native run mainargs=mario
+```
+
+操作方式
+
+* U — SELECT
+* I — START
+* J — A键
+* K — B键
+* W/S/A/D — UP/DOWN/LEFT/RIGHT
+* Q — 退出
