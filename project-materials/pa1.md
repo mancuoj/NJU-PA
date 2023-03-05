@@ -4,7 +4,7 @@
 
 下载 rom：http://jyywiki.cn/ICS/2021/labs/PA1
 
-将游戏 ROM 放置在`nes/rom/`目录下，然后可通过 `mainargs` 选择运行的游戏, 如:
+将游戏 ROM 放置在 `nes/rom/` 目录下，然后可通过 `mainargs` 选择运行的游戏, 如:
 
 ```sh
 cd fceux-am
@@ -179,3 +179,35 @@ Makefile 通过包含 `nemu/include/config/auto.conf` , 与 kconfig 生成的变
 - `SRCS-BLACKLIST-y` - 不参与编译的源文件的黑名单集合
 - `DIRS-y` - 参与编译的目录集合, 该目录下的所有文件都会被加入到 SRCS-y 中
 - `DIRS-BLACKLIST-y` - 不参与编译的目录集合, 该目录下的所有文件都会被加入到 SRCS-BLACKLIST-y 中
+
+上述4个变量还可以与 `menuconfig` 的配置结果中的布尔选项进行关联, 例如 `DIRS-BLACKLIST-$(CONFIG_TARGET_AM) += src/monitor/sdb`, 这样当我们在 menuconfig 中选择了 `TARGET_AM` 选项时, 会得到 `DIRS-BLACKLIST-y += src/monitor/sdb`
+
+所以当我们选中 `TARGET_AM` 选项时, `nemu/src/monitor/sdb` 目录下的所有文件都不会被编译
+
+
+## 编译和链接
+
+通过 `make -nB` 查看 make 过程中的命令, 可以看到如下命令:
+
+```sh
+echo + CC src/nemu-main.c
+mkdir -p /(...)/nemu/build/obj-riscv32-nemu-interpreter/src/
+gcc -O2 -MMD -Wall -Werror -I/(...)/nemu/include -I/(...)/nemu/src/engine/interpreter -I/(...)/nemu/src/isa/riscv32/include -O2    -DITRACE_COND=true -D__GUEST_ISA__=riscv32 -c -o /(...)/nemu/build/obj-riscv32-nemu-interpreter/src/nemu-main.o src/nemu-main.c
+...
+```
+
+编译规则在 `nemu/scripts/build.mk` 中定义：
+
+```
+$(OBJ_DIR)/%.o: %.c
+  @echo + CC $<
+  @mkdir -p $(dir $@)
+  @$(CC) $(CFLAGS) -c -o $@ $<
+  $(call call_fixdep, $(@:.o=.d), $@)
+```
+
+## 第一个客户程序
+
+需要调用 `init_monitor()` 函数来进行初始化工作，将客户程序读入到客户计算机中
+
+
