@@ -43,6 +43,7 @@ static llvm::MCDisassembler *gDisassembler = nullptr;
 static llvm::MCSubtargetInfo *gSTI = nullptr;
 static llvm::MCInstPrinter *gIP = nullptr;
 
+/* 初始化 LLVM 的反汇编器（disassembler），用于将机器码转换为汇编代码 */
 extern "C" void init_disasm(const char *triple) {
   llvm::InitializeAllTargetInfos();
   llvm::InitializeAllTargetMCs();

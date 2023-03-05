@@ -18,8 +18,11 @@
 
 #include <common.h>
 
+/* 配置中定义的内存起始地址 0x80000000 */
 #define PMEM_LEFT  ((paddr_t)CONFIG_MBASE)
+/* 物理内存连续，结束地址就是起始地址 + 内存大小 - 1 */
 #define PMEM_RIGHT ((paddr_t)CONFIG_MBASE + CONFIG_MSIZE - 1)
+/* 程序计数器 PC 的起始地址 */
 #define RESET_VECTOR (PMEM_LEFT + CONFIG_PC_RESET_OFFSET)
 
 /* convert the guest physical address in the guest program to host virtual address in NEMU */

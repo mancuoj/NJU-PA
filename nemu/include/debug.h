@@ -20,6 +20,19 @@
 #include <stdio.h>
 #include <utils.h>
 
+/* 
+- 该宏定义接受一个格式化字符串（format）和可变参数（...）
+- _Log 是 utils.h 里的一个宏定义，会将日志信息分别输出到屏幕和日志文件
+- ANSI_FMT 是 utils.h 中的宏定义，会输出前景色为蓝色的字符串
+
+以下都是 C 语言预定义的宏
+- __FILE__ 当前文件名
+- __LINE__ 当前行号
+- __func__ 当前函数名
+
+- __VA_ARGS__ 会把可变参数转换为逗号分隔的列表
+- 如果在没有参数时会编译错误，## 可以在参数列表为空时省略逗号
+*/
 #define Log(format, ...) \
     _Log(ANSI_FMT("[%s:%d %s] " format, ANSI_FG_BLUE) "\n", \
         __FILE__, __LINE__, __func__, ## __VA_ARGS__)

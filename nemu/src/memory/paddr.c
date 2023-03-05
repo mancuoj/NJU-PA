@@ -41,6 +41,17 @@ static void out_of_bound(paddr_t addr) {
       addr, PMEM_LEFT, PMEM_RIGHT, cpu.pc);
 }
 
+/*
+- 如果定义了 CONFIG_PMEM_MALLOC
+  使用 malloc() 分配一块大小为 0x8000000 字节的内存
+  并将内存的起始地址赋值给全局指针变量 pmem
+  使用了 assert() 函数进行断言确保 malloc() 内存分配成功
+
+- 如果定义了 CONFIG_MEM_RANDOM，会使用随机数填充分配的内存。
+  使用uint32_t类型的指针 p 指向分配的内存起始位置，并通过循环不断往内存中填充随机数，直到填满为止
+  
+- 最后，调用 Log() 函数输出内存空间的信息，包括内存的物理起始地址和物理结束地址
+*/
 void init_mem() {
 #if   defined(CONFIG_PMEM_MALLOC)
   pmem = malloc(CONFIG_MSIZE);

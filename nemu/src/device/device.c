@@ -73,8 +73,10 @@ void sdl_clear_event_queue() {
 #endif
 }
 
+/* 根据配置初始化一大堆奇奇怪怪的设备？*/
 void init_device() {
   IFDEF(CONFIG_TARGET_AM, ioe_init());
+  /* 内存映射？在 map.c 中 */
   init_map();
 
   IFDEF(CONFIG_HAS_SERIAL, init_serial());

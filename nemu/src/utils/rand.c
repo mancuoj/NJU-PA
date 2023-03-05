@@ -18,6 +18,10 @@
 #include <time.h>
 #endif
 
+/*
+- 如果定义了 CONFIG_TARGET_AM，就用 0 作为随机数种子，否则用 time(0) 作为随机数种子
+- time(0) 会返回当前时间
+*/
 void init_rand() {
   srand(MUXDEF(CONFIG_TARGET_AM, 0, time(0)));
 }
