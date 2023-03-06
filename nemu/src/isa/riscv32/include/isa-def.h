@@ -18,6 +18,7 @@
 
 #include <common.h>
 
+/* CPU 的寄存器结构 */
 typedef struct {
   word_t gpr[32];
   vaddr_t pc;

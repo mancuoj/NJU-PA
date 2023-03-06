@@ -51,7 +51,9 @@ static int decode_exec(Decode *s) {
   word_t src1 = 0, src2 = 0, imm = 0;
   s->dnpc = s->snpc;
 
+/* 获取当前待处理的指令 */
 #define INSTPAT_INST(s) ((s)->isa.inst.val)
+/* 解析指令 */
 #define INSTPAT_MATCH(s, name, type, ... /* execute body */ ) { \
   decode_operand(s, &dest, &src1, &src2, &imm, concat(TYPE_, type)); \
   __VA_ARGS__ ; \
@@ -71,7 +73,8 @@ static int decode_exec(Decode *s) {
   return 0;
 }
 
+/* 执行一次指令 */
 int isa_exec_once(Decode *s) {
-  s->isa.inst.val = inst_fetch(&s->snpc, 4);
-  return decode_exec(s);
+  s->isa.inst.val = inst_fetch(&s->snpc, 4);  /* 取指 */
+  return decode_exec(s); /* 译码，分析操作码和操作数 */
 }

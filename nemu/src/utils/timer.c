@@ -16,13 +16,16 @@
 #include <common.h>
 #include MUXDEF(CONFIG_TIMER_GETTIMEOFDAY, <sys/time.h>, <time.h>)
 
+/* 编译时检查值大小 */
 IFDEF(CONFIG_TIMER_CLOCK_GETTIME,
     static_assert(CLOCKS_PER_SEC == 1000000, "CLOCKS_PER_SEC != 1000000"));
 IFDEF(CONFIG_TIMER_CLOCK_GETTIME,
     static_assert(sizeof(clock_t) == 8, "sizeof(clock_t) != 8"));
 
+/* 初始化系统启动时间 */
 static uint64_t boot_time = 0;
 
+/* 获取当前时间（微秒）并返回 */
 static uint64_t get_time_internal() {
 #if defined(CONFIG_TARGET_AM)
   uint64_t us = io_read(AM_TIMER_UPTIME).us;
@@ -38,6 +41,7 @@ static uint64_t get_time_internal() {
   return us;
 }
 
+/* 获取系统从启动到当前的时间 */
 uint64_t get_time() {
   if (boot_time == 0) boot_time = get_time_internal();
   uint64_t now = get_time_internal();

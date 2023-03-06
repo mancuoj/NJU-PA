@@ -26,7 +26,7 @@
 #define MAX_INST_TO_PRINT 10
 
 CPU_state cpu = {};
-uint64_t g_nr_guest_inst = 0;
+uint64_t g_nr_guest_inst = 0;  // 运行指令的总数
 static uint64_t g_timer = 0; // unit: us
 static bool g_print_step = false;
 
@@ -40,6 +40,7 @@ static void trace_and_difftest(Decode *_this, vaddr_t dnpc) {
   IFDEF(CONFIG_DIFFTEST, difftest_step(_this->pc, dnpc));
 }
 
+/* 执行一次指令 */
 static void exec_once(Decode *s, vaddr_t pc) {
   s->pc = pc;
   s->snpc = pc;
@@ -67,14 +68,15 @@ static void exec_once(Decode *s, vaddr_t pc) {
 #endif
 }
 
+/* 执行指定数量的指令 */
 static void execute(uint64_t n) {
   Decode s;
   for (;n > 0; n --) {
     exec_once(&s, cpu.pc);
-    g_nr_guest_inst ++;
+    g_nr_guest_inst ++;  // 已运行指令的总数
     trace_and_difftest(&s, cpu.pc);
     if (nemu_state.state != NEMU_RUNNING) break;
-    IFDEF(CONFIG_DEVICE, device_update());
+    IFDEF(CONFIG_DEVICE, device_update());  // 更新设备状态
   }
 }
 
@@ -92,9 +94,11 @@ void assert_fail_msg() {
   statistic();
 }
 
-/* Simulate how the CPU works. */
+/* Simulate how the CPU works. 模拟 CPU 工作，一直执行指令，直到遇到断点，达到指定的执行次数，或者程序执行完毕 */
 void cpu_exec(uint64_t n) {
+  /* 定义 g_print_step 会将指令信息输出到终端上 */
   g_print_step = (n < MAX_INST_TO_PRINT);
+  /* 判断当前程序状态 */
   switch (nemu_state.state) {
     case NEMU_END: case NEMU_ABORT:
       printf("Program execution has ended. To restart the program, exit NEMU and run again.\n");
@@ -102,11 +106,13 @@ void cpu_exec(uint64_t n) {
     default: nemu_state.state = NEMU_RUNNING;
   }
 
+  /* 在 timer.c 中，记录当前系统时间 */
   uint64_t timer_start = get_time();
 
   execute(n);
 
   uint64_t timer_end = get_time();
+  /* 记录 CPU 执行指令的时间 */
   g_timer += timer_end - timer_start;
 
   switch (nemu_state.state) {

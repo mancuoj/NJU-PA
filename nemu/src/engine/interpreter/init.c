@@ -21,7 +21,7 @@ void engine_start() {
 #ifdef CONFIG_TARGET_AM
   cpu_exec(-1);
 #else
-  /* Receive commands from user. */
+  /* Receive commands from user. 进入简单调试器的主循环，接收来自用户的指令，在 sdb.c 中 */
   sdb_mainloop();
 #endif
 }

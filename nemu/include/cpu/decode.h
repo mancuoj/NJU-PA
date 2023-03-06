@@ -19,11 +19,11 @@
 #include <isa.h>
 
 typedef struct Decode {
-  vaddr_t pc;
-  vaddr_t snpc; // static next pc
-  vaddr_t dnpc; // dynamic next pc
-  ISADecodeInfo isa;
-  IFDEF(CONFIG_ITRACE, char logbuf[128]);
+  vaddr_t pc;   // 指令地址
+  vaddr_t snpc; // static next pc 静态下一条指令地址，与执行过程无关
+  vaddr_t dnpc; // dynamic next pc 动态下一条指令地址，与执行过程有关
+  ISADecodeInfo isa;  // 指令的解码信息，操作数，寻址方式，寄存器编号等
+  IFDEF(CONFIG_ITRACE, char logbuf[128]); // 指令的日志信息
 } Decode;
 
 // --- pattern matching mechanism ---

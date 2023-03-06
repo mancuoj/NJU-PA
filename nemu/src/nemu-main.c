@@ -20,15 +20,16 @@ void am_init_monitor();
 void engine_start();
 int is_exit_status_bad();
 
+/* 程序入口 */
 int main(int argc, char *argv[]) {
-  /* Initialize the monitor. */
+  /* Initialize the monitor. 初始化 monitor */
 #ifdef CONFIG_TARGET_AM
   am_init_monitor();
 #else
   init_monitor(argc, argv);
 #endif
 
-  /* Start engine. */
+  /* Start engine. 启动，在 init.c 中 */
   engine_start();
 
   return is_exit_status_bad();
