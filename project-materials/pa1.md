@@ -210,4 +210,55 @@ $(OBJ_DIR)/%.o: %.c
 
 需要调用 `init_monitor()` 函数来进行初始化工作，将客户程序读入到客户计算机中
 
+`make run` 查看到错误信息，打印了
+
+```
+[src/monitor/monitor.c:44 welcome] Exercise: Please remove me in the source code and compile NEMU again.
+```
+
+找到以下代码删除即可
+
+```c
+-- Log("Exercise: Please remove me in the source code and compile NEMU again.");
+-- assert(0);
+```
+
+初始化完成后，main() 继续调用 engine_start() 进入调试器的主循环 sdb_mainloop()
+
+> 我们已经在上文提到过, kconfig 会根据配置选项的结果在 `nemu/include/generated/autoconf.h` 中定义一些形如 `CONFIG_xxx` 的宏, 我们可以在 C 代码中通过条件编译的功能对这些宏进行测试, 来判断是否编译某些代码. 例如, 当 `CONFIG_DEVICE` 这个宏没有定义时, 设备相关的代码就无需进行编译
+> 为了编写更紧凑的代码, 我们在 `nemu/include/macro.h` 中定义了一些专门用来对宏进行测试的宏. 例如 `IFDEF(CONFIG_DEVICE, init_device());` 表示, 如果定义了 `CONFIG_DEVICE`, 才会调用 `init_device()` 函数; 而 `MUXDEF(CONFIG_TRACE, "ON", "OFF")` 则表示, 如果定义了 `CONFIG_TRACE`, 则预处理结果为"ON"("OFF"在预处理后会消失), 否则预处理结果为"OFF"
+> 这些宏的功能非常神奇, 你知道这些宏是如何工作的吗?
+
+？
+
+> 阅读 `init_monitor()` 函数的代码, 你会发现里面全部都是函数调用. 按道理, 把相应的函数体在 `init_monitor()` 中展开也不影响代码的正确性. 相比之下, 在这里使用函数有什么好处呢?
+
+更易维护、修改和测试
+
+> `parse_args()` 中调用了一个你也许不太熟悉的函数 `getopt_long()`, 框架代码通过它来对参数进行解析, 具体的行为可以查阅 `man 3 getopt_long`
+
+```c
+#include <getopt.h>
+
+// 解析命令行参数
+int getopt_long(int argc, char * const argv[],
+       const char *optstring,
+       const struct option *longopts, int *longindex);
+```
+
+- man 1 用于查看用户命令
+- man 2 用于查看系统调用
+- man 3 用于查看函数库
+- man 4 用于查看特殊文件和设备
+- ...
+
+> 另外的一个问题是, 这些参数是从哪里来的呢?
+
+native.mk 中定义的
+
+> 在 `cmd_c()` 函数中, 调用 `cpu_exec()` 的时候传入了参数 -1, 你知道这是什么意思吗?
+
+执行单条指令直到遇到下个断点或者执行了指定次数
+
+> "调用 `cpu_exec()` 的时候传入了参数 -1", 这一做法属于未定义行为吗? 请查阅 C99 手册确认你的想法
 
