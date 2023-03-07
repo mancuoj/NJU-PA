@@ -137,8 +137,12 @@ void sdb_mainloop() {
     for (i = 0; i < NR_CMD; i ++) {
       /* 比较是否是命令 */
       if (strcmp(cmd, cmd_table[i].name) == 0) {
-        /* 如果返回小于 0，代表发生了错误 */
-        if (cmd_table[i].handler(args) < 0) { return; }
+        if (cmd_table[i].handler(args) < 0) { 
+          if (strcmp(cmd, "q") == 0) {
+            nemu_state.state = NEMU_QUIT;
+          }
+          return; 
+        }
         break;
       }
     }
